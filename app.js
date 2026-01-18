@@ -1,8 +1,22 @@
+/**
+ * Workout Logs (Solo Project 1 - CPSC 3750)
+ * Runs locally on XAMPP (Apache) and stores data in localStorage.
+ * Domain: workout logs (date, exercise, sets, reps, weight)
+ *
+ * Core features:
+ * - CRUD: Create, Read, Update, Delete
+ * - Persistence: localStorage (data survives refresh)
+ * - Seed data: starts with 30 records on first load
+ * - Stats view: total workouts + average weight with animation
+ */
+
+
 const STORAGE_KEY = "workoutLogs_v1";
 
-/* =========================
-   SEED DATA
-========================= */
+/* =========================================================
+   SEED DATA (Runs only the FIRST time, when localStorage empty)
+   - Requirement: app starts with at least 30 records
+========================================================= */
 function generateSeedData() {
   const exercises = [
     "Bench Press",
@@ -15,10 +29,11 @@ function generateSeedData() {
 
   const data = [];
 
+// Create 30 predictable starter records
   for (let i = 1; i <= 30; i++) {
     const ex = exercises[i % exercises.length];
     data.push({
-      id: i,
+      id: i, // unique identifier used for edit/delete
       date: `2026-01-${String((i % 12) + 1).padStart(2, "0")}`,
       exercise: ex,
       sets: (i % 5) + 1,
@@ -29,13 +44,17 @@ function generateSeedData() {
   return data;
 }
 
-/* =========================
-   LOCAL STORAGE
-========================= */
+/* =========================================================
+   LOCAL STORAGE (Persistence layer)
+   - loadRecords(): reads from localStorage OR seeds first time
+   - saveRecords(): writes the current records array to storage
+========================================================= */
 function loadRecords() {
   const raw = localStorage.getItem(STORAGE_KEY);
+  // If we already have saved data, use it
   if (raw) return JSON.parse(raw);
 
+  // Otherwise, seed the initial 30 records and persist them
   const seeded = generateSeedData();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
   return seeded;
@@ -45,20 +64,25 @@ function saveRecords(records) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
 }
 
-/* =========================
-   STATE
-========================= */
+
+/* =========================================================
+   STATE (In-memory app data)
+   - records: the main array of workout objects (the “database”)
+   - editingId: null when creating, or holds id when editing
+========================================================= */
 let records = loadRecords();
 let editingId = null;
 
 /* =========================
-   HELPERS
+   HELPERS FOR VALIDATION + ID GENERATION
 ========================= */
+// Create a new unique id by finding the current max id + 1
 function getNextId() {
   const maxId = records.reduce((max, r) => Math.max(max, r.id), 0);
   return maxId + 1;
 }
 
+// Validate form input before creating/updating a record
 function isValidWorkout(w) {
   if (!w.date || !w.exercise) return false;
   if (Number.isNaN(w.sets) || w.sets < 1 || w.sets > 20) return false;
@@ -67,9 +91,11 @@ function isValidWorkout(w) {
   return true;
 }
 
-/* =========================
-   RENDER (READ)
-========================= */
+/* =========================================================
+   READ (Render List View)
+   - Converts records array into HTML table rows
+   - Adds Edit/Delete buttons for each row
+========================================================= */
 function renderList() {
   const listEl = document.getElementById("list");
 
@@ -90,7 +116,7 @@ function renderList() {
       `
     )
     .join("");
-
+// Render full table
   listEl.innerHTML = `
     <table border="1" cellpadding="8" cellspacing="0">
       <thead>
@@ -110,9 +136,12 @@ function renderList() {
   `;
 }
 
-/* =========================
-   STATS (ANIMATED)
-========================= */
+/* =========================================================
+   STATS VIEW (Total + Domain-Specific Stat)
+   - Total workouts = records.length
+   - Domain stat = average weight across all workouts
+   - Animated counters for a nicer UI touch
+========================================================= */
 function animateStats() {
   const els = document.querySelectorAll(".stat-value");
 
@@ -124,6 +153,7 @@ function animateStats() {
     const durationMs = 650;
     const startTime = performance.now();
 
+    // requestAnimationFrame creates a smooth animation
     function tick(now) {
       const t = Math.min(1, (now - startTime) / durationMs);
       const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
@@ -145,6 +175,7 @@ function renderStats() {
   const totalWeight = records.reduce((sum, r) => sum + Number(r.weight || 0), 0);
   const avgWeight = total === 0 ? 0 : totalWeight / total;
 
+  // Insert the stat cards into the page
   statsEl.innerHTML = `
     <div class="stat-card">
       <span class="stat-label">Total Workouts</span>
@@ -163,6 +194,8 @@ function renderStats() {
 /* =========================
    EDIT HELPERS
 ========================= */
+
+// Fill form inputs from an existing workout (used when clicking Edit)
 function setFormValues(workout) {
   document.getElementById("date").value = workout.date;
   document.getElementById("exercise").value = workout.exercise;
@@ -184,9 +217,11 @@ function setEditMode(on) {
   }
 }
 
-/* =========================
-   CREATE / UPDATE
-========================= */
+/* =========================================================
+   CREATE + UPDATE (Form submit)
+   - If editingId is null -> CREATE
+   - If editingId has an id -> UPDATE that record
+========================================================= */
 const form = document.getElementById("workoutForm");
 
 form.addEventListener("submit", (e) => {
@@ -205,7 +240,7 @@ form.addEventListener("submit", (e) => {
     alert("Please enter valid workout info (check required fields and number ranges).");
     return;
   }
-
+// CREATE vs UPDATE logic
   if (editingId === null) {
     // CREATE
     records.push(workoutFromForm);
@@ -222,9 +257,11 @@ form.addEventListener("submit", (e) => {
   form.reset();
 });
 
-/* =========================
-   LIST CLICK HANDLERS (EDIT + DELETE)
-========================= */
+/* =========================================================
+   DELETE + EDIT (Event delegation on table)
+   - We attach ONE click handler to #list
+   - Then detect if the click was on Edit/Delete buttons
+========================================================= */
 document.getElementById("list").addEventListener("click", (e) => {
   // DELETE
   const delBtn = e.target.closest(".deleteBtn");
@@ -267,9 +304,10 @@ document.getElementById("cancelBtn").addEventListener("click", () => {
   form.reset();
 });
 
-/* =========================
-   INITIAL LOAD
-========================= */
+/* =========================================================
+   INITIAL LOAD (Runs once when page opens/refreshed)
+   - Renders list + stats based on records loaded from localStorage
+========================================================= */
 renderList();
 renderStats();
 
