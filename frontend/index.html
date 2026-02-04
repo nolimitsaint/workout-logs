@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Workout Logs (Cloud)</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Workout Logs</h1>
+
+    <div id="app">
+      <section>
+        <h2>Add / Edit Workout</h2>
+
+        <form id="workoutForm">
+          <label>
+            Date:
+            <input type="date" id="date" required />
+          </label>
+
+          <label>
+            Exercise:
+            <input type="text" id="exercise" placeholder="Bench Press" required />
+          </label>
+
+          <label>
+            Sets:
+            <input type="number" id="sets" min="1" max="20" required />
+          </label>
+
+          <label>
+            Reps:
+            <input type="number" id="reps" min="1" max="50" required />
+          </label>
+
+          <label>
+            Weight (lbs):
+            <input type="number" id="weight" min="0" max="1000" required />
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" id="submitBtn">Add Workout</button>
+            <button type="button" id="cancelBtn" style="display:none;">Cancel Edit</button>
+          </div>
+        </form>
+
+        <p id="formError" class="error" style="display:none;"></p>
+      </section>
+
+      <hr />
+
+      <section>
+        <h2>Stats</h2>
+        <div id="stats"></div>
+      </section>
+
+      <hr />
+
+      <section>
+        <h2>All Workouts</h2>
+
+        <div class="pager">
+          <button id="prevPage">Prev</button>
+          <span id="pageInfo">Page 1</span>
+          <button id="nextPage">Next</button>
+        </div>
+
+        <div id="list"></div>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
