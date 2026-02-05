@@ -156,3 +156,10 @@ if __name__ == "__main__":
 # To run the app, use the command: python backend/app.py
 
 
+@app.get("/")
+def home():
+    return {
+        "status": "ok",
+        "message": "Workout Logs API is running",
+        "routes": ["/api/workouts", "/api/stats"]
+    }
