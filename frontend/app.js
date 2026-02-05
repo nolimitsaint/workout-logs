@@ -1,14 +1,37 @@
 /**
- * Workout Logs (Solo Project 1 - CPSC 3750)
- * Runs locally on XAMPP (Apache) and stores data in localStorage.
- * Domain: workout logs (date, exercise, sets, reps, weight)
+ * Workout Logs (Solo Project 2 – CPSC 3750)
+ * Cloud-hosted Collection Manager with client/server architecture.
  *
- * Core features:
- * - CRUD: Create, Read, Update, Delete
- * - Persistence: localStorage (data survives refresh)
- * - Seed data: starts with 30 records on first load
- * - Stats view: total workouts + average weight with animation
+ * Frontend:
+ * - Hosted on Netlify
+ * - Vanilla JavaScript, HTML, CSS
+ *
+ * Backend:
+ * - Python (Flask) API hosted on Render
+ * - Data persisted in server-side JSON files
+ *
+ * Domain:
+ * Workout logs (date, exercise, sets, reps, weight)
+ *
+ * Core Features:
+ * - Full CRUD via backend API (Create, Read, Update, Delete)
+ * - Server-side JSON persistence (data survives refresh & different devices)
+ * - Client communicates with backend using HTTP requests (fetch)
+ * - Seed data: application starts with 30 records
+ * - Paging: fixed page size of 10 records with Next/Previous controls
+ * - Stats view:
+ *   - Total workouts (entire dataset)
+ *   - Average weight lifted (domain-specific statistic)
+ * - Validation:
+ *   - Client-side form validation
+ *   - Server-side validation in Flask
+ * - Delete confirmation before removing records
+ *
+ * Notes:
+ * - Backend may take a few seconds to respond on first load due to
+ *   Render free-tier cold start behavior.
  */
+
 
 
 // Change this after backend deployment (Render/Railway/etc)
