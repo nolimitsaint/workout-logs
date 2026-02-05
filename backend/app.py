@@ -8,6 +8,14 @@ CORS(app)  # allow Netlify frontend to call this API (cross-origin)
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "workouts.json")
 
+@app.get("/")
+def home():
+    return {
+        "status": "ok",
+        "message": "Workout Logs API is running",
+        "routes": ["/api/workouts", "/api/stats"]
+    }
+
 # ----------------------------
 # JSON file helpers
 # ----------------------------
@@ -151,14 +159,8 @@ def delete_workout(item_id):
     write_data(new_records)
     return jsonify({"ok": True})
 
-@app.get("/")
-def home():
-    return {
-        "status": "ok",
-        "message": "Workout Logs API is running",
-        "routes": ["/api/workouts", "/api/stats"]
-    }
-    
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 # To run the app, use the command: python backend/app.py
