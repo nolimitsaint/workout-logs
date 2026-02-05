@@ -12,7 +12,8 @@
 
 
 // Change this after backend deployment (Render/Railway/etc)
-const API_BASE = "http://127.0.0.1:5000";
+const API_BASE = "https://workout-logs-8oyd.onrender.com";
+
 
 const PAGE_SIZE = 10;
 
