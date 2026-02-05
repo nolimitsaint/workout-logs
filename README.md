@@ -15,6 +15,12 @@ Netlify URL (Frontend):
 Backend API (Render):
 👉 https://workout-logs-8oyd.onrender.com
 
+⚠️ Note on Initial Load Time
+
+The backend API is hosted on Render’s free tier, which may enter a sleep state after inactivity.  
+On the first request (especially in incognito), the workout list and stats may take up to ~30 seconds to load while the server wakes up.  
+Subsequent requests load immediately.
+
 The application is publicly accessible and works in an incognito/private browser window.
 
 Project Overview
