@@ -151,11 +151,6 @@ def delete_workout(item_id):
     write_data(new_records)
     return jsonify({"ok": True})
 
-if __name__ == "__main__":
-    app.run(debug=True)
-# To run the app, use the command: python backend/app.py
-
-
 @app.get("/")
 def home():
     return {
@@ -163,3 +158,10 @@ def home():
         "message": "Workout Logs API is running",
         "routes": ["/api/workouts", "/api/stats"]
     }
+    
+if __name__ == "__main__":
+    app.run(debug=True)
+# To run the app, use the command: python backend/app.py
+
+
+
